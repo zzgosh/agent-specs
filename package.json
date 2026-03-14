@@ -4,7 +4,7 @@
   "description": "CLI for managing AGENTS.md files",
   "type": "module",
   "bin": {
-    "agent-specs": "./bin/cli.mjs"
+    "agent-specs": "bin/cli.mjs"
   },
   "exports": {
     ".": {
