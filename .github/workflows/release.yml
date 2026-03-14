@@ -67,7 +67,7 @@ jobs:
           fi
 
       - name: Publish package to npm
-        run: npm publish
+        run: npm publish --provenance --access public
 
       - name: Create and push tag
         run: |
