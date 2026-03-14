@@ -79,6 +79,58 @@ jobs:
           git tag -a "${{ steps.package.outputs.tag }}" -m "${{ steps.package.outputs.tag }}"
           git push origin "${{ steps.package.outputs.tag }}"
 
+      - name: Install Claude Code CLI
+        run: npm install -g @anthropic-ai/claude-code
+
+      - name: Generate release notes with Claude
+        id: generate-notes
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          ANTHROPIC_BASE_URL: https://openrouter.ai/api
+        run: |
+          set -euo pipefail
+
+          TAG="${{ steps.package.outputs.tag }}"
+          PREV_TAG=$(git tag --sort=-v:refname | sed -n '2p' || echo "")
+
+          if [ -n "$PREV_TAG" ]; then
+            RANGE="${PREV_TAG}..${TAG}"
+          else
+            RANGE=""
+          fi
+
+          if [ -n "$RANGE" ]; then
+            GIT_LOG=$(git log --oneline "$RANGE")
+            DIFF_STAT=$(git diff --stat "$RANGE")
+          else
+            GIT_LOG=$(git log --oneline)
+            DIFF_STAT="首次发布"
+          fi
+
+          claude -p --max-turns 1 --model anthropic/claude-sonnet-4.6 "
+          你是 release notes 生成器。请根据以下 git 变更信息，为 ${TAG} 版本生成简洁自然的 release notes。
+
+          项目：${{ steps.package.outputs.name }}（CLI for managing AGENTS.md files）
+
+          Git commits:
+          ${GIT_LOG}
+
+          文件变更统计:
+          ${DIFF_STAT}
+
+          要求：
+          - 用简洁自然的中文描述变更内容，面向使用者
+          - 适当分类（如 ✨ 新功能 / 🐛 修复 / 🔧 改进 / 📦 发布与构建）
+          - 不要暴露 commit hash 或 PR 编号
+          - 输出纯 Markdown，不要用代码块包裹
+          - 不超过 300 字
+          " > /tmp/release-notes.md || true
+
+          # 如果 Claude 生成失败，使用默认内容
+          if [ ! -s /tmp/release-notes.md ]; then
+            echo "已发布 \`${{ steps.package.outputs.name }}\` ${TAG} 到 npm。" > /tmp/release-notes.md
+          fi
+
       - name: Create GitHub Release
         env:
           GH_TOKEN: ${{ github.token }}
@@ -86,5 +138,4 @@ jobs:
           gh release create "${{ steps.package.outputs.tag }}" \
             --verify-tag \
             --title "${{ steps.package.outputs.tag }}" \
-            --generate-notes \
-            --notes "Published \`${{ steps.package.outputs.name }}\` v${{ steps.package.outputs.version }} to npm."
+            --notes-file /tmp/release-notes.md
