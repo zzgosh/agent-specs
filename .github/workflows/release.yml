@@ -31,12 +31,8 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
-          node-version: 20.x
+          node-version: 24
           registry-url: https://registry.npmjs.org
-          cache: npm
-
-      - name: Upgrade npm for OIDC trusted publishing support
-        run: npm install -g npm@latest
 
       - name: Install dependencies
         run: npm ci
@@ -70,7 +66,7 @@ jobs:
           fi
 
       - name: Publish package to npm
-        run: npm publish --provenance --access public
+        run: npm publish --access public
 
       - name: Create and push tag
         run: |
@@ -104,31 +100,31 @@ jobs:
             DIFF_STAT=$(git diff --stat "$RANGE")
           else
             GIT_LOG=$(git log --oneline)
-            DIFF_STAT="首次发布"
+            DIFF_STAT="Initial release"
           fi
 
           claude -p --max-turns 1 --model anthropic/claude-sonnet-4.6 "
-          你是 release notes 生成器。请根据以下 git 变更信息，为 ${TAG} 版本生成简洁自然的 release notes。
+          You are a release notes generator. Based on the git changes below, write concise and natural release notes for version ${TAG}.
 
-          项目：${{ steps.package.outputs.name }}（CLI for managing AGENTS.md files）
+          Project: ${{ steps.package.outputs.name }} (CLI for managing AGENTS.md files)
 
           Git commits:
           ${GIT_LOG}
 
-          文件变更统计:
+          File change stats:
           ${DIFF_STAT}
 
-          要求：
-          - 用简洁自然的中文描述变更内容，面向使用者
-          - 适当分类（如 ✨ 新功能 / 🐛 修复 / 🔧 改进 / 📦 发布与构建）
-          - 不要暴露 commit hash 或 PR 编号
-          - 输出纯 Markdown，不要用代码块包裹
-          - 不超过 300 字
+          Requirements:
+          - Describe changes in clear, user-facing English
+          - Group by category where appropriate (e.g. ✨ Features / 🐛 Bug Fixes / 🔧 Improvements / 📦 Build & Release)
+          - Do not expose commit hashes or PR numbers
+          - Output plain Markdown, do not wrap in a code block
+          - Keep it under 300 words
           " > /tmp/release-notes.md || true
 
-          # 如果 Claude 生成失败，使用默认内容
+          # Fall back to a default message if Claude fails
           if [ ! -s /tmp/release-notes.md ]; then
-            echo "已发布 \`${{ steps.package.outputs.name }}\` ${TAG} 到 npm。" > /tmp/release-notes.md
+            echo "Released \`${{ steps.package.outputs.name }}\` ${TAG} to npm." > /tmp/release-notes.md
           fi
 
       - name: Create GitHub Release
