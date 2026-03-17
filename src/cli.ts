@@ -1,3 +1,4 @@
+import { createRequire } from 'node:module'
 import { Command } from 'commander'
 import { addCommand } from './commands/add.ts'
 import { removeCommand } from './commands/remove.ts'
@@ -5,12 +6,15 @@ import { updateCommand } from './commands/update.ts'
 import { listCommand } from './commands/list.ts'
 import { linkCommand } from './commands/link.ts'
 
+const require = createRequire(import.meta.url)
+const pkg = require('../package.json')
+
 const program = new Command()
 
 program
   .name('agent-specs')
   .description('CLI for managing AGENTS.md files')
-  .version('0.1.0')
+  .version(pkg.version)
 
 program
   .command('add')
