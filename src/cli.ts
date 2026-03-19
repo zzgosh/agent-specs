@@ -12,7 +12,7 @@ const pkg = require('../package.json')
 const program = new Command()
 
 program
-  .name('agent-spec')
+  .name('agent-specs')
   .description('CLI for managing AGENTS.md files')
   .version(pkg.version)
 

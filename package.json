@@ -1,10 +1,10 @@
 {
-  "name": "agent-spec",
+  "name": "agent-specs",
   "version": "0.1.4",
   "description": "CLI for managing AGENTS.md files",
   "type": "module",
   "bin": {
-    "agent-spec": "bin/cli.mjs"
+    "agent-specs": "bin/cli.mjs"
   },
   "exports": {
     ".": {
@@ -34,7 +34,7 @@
     "unbuild": "^3.5.0"
   },
   "keywords": [
-    "agent-spec",
+    "agent-specs",
     "agents",
     "ai",
     "cli",
@@ -43,10 +43,10 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/zzgosh/agent-spec.git"
+    "url": "git+https://github.com/zzgosh/agent-specs.git"
   },
   "bugs": {
-    "url": "https://github.com/zzgosh/agent-spec/issues"
+    "url": "https://github.com/zzgosh/agent-specs/issues"
   },
   "license": "MIT"
 }

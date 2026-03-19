@@ -31,7 +31,7 @@ async function listGlobal(): Promise<void> {
 
   if (!config) {
     console.log(pc.yellow('Global AGENTS.md is not installed'))
-    console.log(pc.dim(`Install it with ${pc.bold('agent-spec add <source> -g')}`))
+    console.log(pc.dim(`Install it with ${pc.bold('agent-specs add <source> -g')}`))
     return
   }
 
@@ -84,7 +84,7 @@ async function listProject(): Promise<void> {
 
   if (!config) {
     console.log(pc.yellow('Project AGENTS.md is not installed'))
-    console.log(pc.dim(`Install it with ${pc.bold('agent-spec add <source>')}`))
+    console.log(pc.dim(`Install it with ${pc.bold('agent-specs add <source>')}`))
     return
   }
 

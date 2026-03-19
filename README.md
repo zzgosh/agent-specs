@@ -1,8 +1,8 @@
-# agent-spec
+# agent-specs
 
-Chinese documentation: [README.zh-CN](https://github.com/zzgosh/agent-spec/blob/main/docs/README.zh-CN.md)
+Chinese documentation: [README.zh-CN](https://github.com/zzgosh/agent-specs/blob/main/docs/README.zh-CN.md)
 
-`agent-spec` is a CLI for managing `AGENTS.md` files.
+`agent-specs` is a CLI for managing `AGENTS.md` files.
 
 It can load `AGENTS.md` from a remote URL or a local file and install it either per-project or globally. In global mode, it detects installed AI agent clients on the local machine and symlinks a single shared rules file into each client’s native path so multiple agents can reuse the same source of truth. You can also target a specific agent explicitly.
 
@@ -12,64 +12,49 @@ The examples in this repository use Vercel's public [agent-skills/AGENTS.md](htt
 
 ```bash
 # Run directly (recommended)
-npx agent-spec <command>
+npx agent-specs <command>
 
 # Or install globally
-npm install -g agent-spec
+npm install -g agent-specs
 ```
-
-## Migration from `agent-specs`
-
-If you already installed the old package `agent-specs`, migrate to `agent-spec` before using the new docs and commands.
-
-```bash
-# Remove the old global package
-npm uninstall -g agent-specs
-
-# Install the renamed package
-npm install -g agent-spec
-```
-
-- The npm package name changed from `agent-specs` to `agent-spec`.
-- The CLI command also changed from `agent-specs` to `agent-spec`.
 
 ## Quick Start
 
 ```bash
 # Project install: download AGENTS.md into the current directory
-agent-spec add https://github.com/vercel-labs/agent-skills/blob/main/AGENTS.md
+agent-specs add https://github.com/vercel-labs/agent-skills/blob/main/AGENTS.md
 
 # Reuse the existing project AGENTS.md and link it to Claude Code in this project
-agent-spec add ./AGENTS.md -a claude-code
+agent-specs add ./AGENTS.md -a claude-code
 
 # Global install: write to ~/.agents/ and symlink to detected agent clients
-agent-spec add https://github.com/vercel-labs/agent-skills/blob/main/AGENTS.md -g
+agent-specs add https://github.com/vercel-labs/agent-skills/blob/main/AGENTS.md -g
 ```
 
 ## Commands
 
-### `agent-spec add <source>`
+### `agent-specs add <source>`
 
 Install `AGENTS.md` from a remote URL or local file.
 
 ```bash
 # Project install (default)
-agent-spec add https://github.com/vercel-labs/agent-skills/blob/main/AGENTS.md
+agent-specs add https://github.com/vercel-labs/agent-skills/blob/main/AGENTS.md
 
 # Project agent install: keep ./AGENTS.md as the source of truth
-agent-spec add ./AGENTS.md -a claude-code
+agent-specs add ./AGENTS.md -a claude-code
 
 # Project agent install from another local file: write ./AGENTS.md, then symlink the selected agent path
-agent-spec add ./docs/shared-rules.md -a claude-code
+agent-specs add ./docs/shared-rules.md -a claude-code
 
 # Global install: write to ~/.agents/AGENTS.md and symlink to detected agents
-agent-spec add https://github.com/vercel-labs/agent-skills/blob/main/AGENTS.md -g
+agent-specs add https://github.com/vercel-labs/agent-skills/blob/main/AGENTS.md -g
 
 # Global install for a single agent
-agent-spec add ./AGENTS.md -g -a claude-code
+agent-specs add ./AGENTS.md -g -a claude-code
 
 # Skip confirmation and overwrite existing files after backing them up
-agent-spec add https://github.com/vercel-labs/agent-skills/blob/main/AGENTS.md -g -y
+agent-specs add https://github.com/vercel-labs/agent-skills/blob/main/AGENTS.md -g -y
 ```
 
 Supported source formats:
@@ -92,41 +77,41 @@ Options:
 | `-a, --agent <name>` | Link to a specific agent client instead of relying on auto-detection |
 | `-y, --yes` | Skip confirmation and automatically back up then overwrite existing files |
 
-### `agent-spec update`
+### `agent-specs update`
 
 Re-load and update `AGENTS.md` from its original source.
 
 ```bash
-agent-spec update
-agent-spec update -g
+agent-specs update
+agent-specs update -g
 ```
 
-### `agent-spec list`
+### `agent-specs list`
 
 Show installation and symlink status.
 
 ```bash
-agent-spec list
-agent-spec list -g
+agent-specs list
+agent-specs list -g
 ```
 
-### `agent-spec link`
+### `agent-specs link`
 
 Detect agent clients again and recreate symlinks. This is useful after installing a new agent client. Explicitly configured global agents are also preserved.
 
 ```bash
-agent-spec link
-agent-spec link -y
+agent-specs link
+agent-specs link -y
 ```
 
-### `agent-spec remove`
+### `agent-specs remove`
 
 Remove installed `AGENTS.md` files and related symlinks.
 
 ```bash
-agent-spec remove
-agent-spec remove -g
-agent-spec remove -g -y
+agent-specs remove
+agent-specs remove -g
+agent-specs remove -g -y
 ```
 
 - If the install reused an existing `AGENTS.md` as the source of truth, `remove` preserves that file and removes only the symlink(s) plus CLI metadata.
@@ -149,7 +134,7 @@ agent-spec remove -g -y
 ```
 
 - Editing `~/.agents/AGENTS.md` updates every linked agent immediately.
-- Running `agent-spec update -g` refreshes the shared file without recreating symlinks.
+- Running `agent-specs update -g` refreshes the shared file without recreating symlinks.
 
 ## How Project Agent Install Works
 
@@ -192,7 +177,7 @@ When `-a, --agent <name>` is provided, the CLI links the selected agent directly
 ## Directory Structure
 
 ```text
-agent-spec/
+agent-specs/
 |-- .github/
 |   `-- workflows/
 |       |-- ci.yml

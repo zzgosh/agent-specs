@@ -146,7 +146,7 @@ async function addGlobal(
   if (agents.length === 0) {
     console.log(pc.yellow('No installed agent clients detected'))
     console.log(
-      pc.dim('Run agent-spec link after installing an agent client to create symlinks'),
+      pc.dim('Run agent-specs link after installing an agent client to create symlinks'),
     )
   } else {
     if (selectedAgent) {

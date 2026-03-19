@@ -21,7 +21,7 @@ export async function linkCommand(options: LinkOptions): Promise<void> {
     await access(agentsPath)
   } catch {
     console.error(pc.red(`${agentsPath} does not exist`))
-    console.error(pc.dim(`Install it first with ${pc.bold('agent-spec add <url> -g')}`))
+    console.error(pc.dim(`Install it first with ${pc.bold('agent-specs add <url> -g')}`))
     process.exit(1)
   }
 

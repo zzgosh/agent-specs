@@ -25,7 +25,7 @@ export async function updateCommand(options: UpdateOptions): Promise<void> {
 async function updateGlobal(): Promise<void> {
   const config = await readGlobalConfig()
   if (!config) {
-    console.error(pc.red('Global AGENTS.md is not installed. Run agent-spec add <source> -g first.'))
+    console.error(pc.red('Global AGENTS.md is not installed. Run agent-specs add <source> -g first.'))
     process.exit(1)
   }
 
@@ -57,7 +57,7 @@ async function updateGlobal(): Promise<void> {
 async function updateProject(): Promise<void> {
   const config = await readProjectConfig()
   if (!config) {
-    console.error(pc.red('Project AGENTS.md is not installed. Run agent-spec add <source> first.'))
+    console.error(pc.red('Project AGENTS.md is not installed. Run agent-specs add <source> first.'))
     process.exit(1)
   }
 

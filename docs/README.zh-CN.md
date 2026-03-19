@@ -1,4 +1,4 @@
-# agent-spec
+# agent-specs
 
 English README: [README.md](../README.md)
 
@@ -12,64 +12,49 @@ English README: [README.md](../README.md)
 
 ```bash
 # 直接使用（推荐）
-npx agent-spec <command>
+npx agent-specs <command>
 
 # 或全局安装
-npm install -g agent-spec
+npm install -g agent-specs
 ```
-
-## 从 `agent-specs` 迁移
-
-如果你之前已经安装过旧包 `agent-specs`，请先迁移到 `agent-spec`，再使用新的文档和命令。
-
-```bash
-# 卸载旧的全局包
-npm uninstall -g agent-specs
-
-# 安装重命名后的新包
-npm install -g agent-spec
-```
-
-- npm 包名已从 `agent-specs` 改为 `agent-spec`
-- CLI 命令也已从 `agent-specs` 改为 `agent-spec`
 
 ## 快速开始
 
 ```bash
 # 项目级：下载 AGENTS.md 到当前目录
-agent-spec add https://github.com/vercel-labs/agent-skills/blob/main/AGENTS.md
+agent-specs add https://github.com/vercel-labs/agent-skills/blob/main/AGENTS.md
 
 # 复用当前项目已有的 AGENTS.md，并链接到项目内的 Claude Code 路径
-agent-spec add ./AGENTS.md -a claude-code
+agent-specs add ./AGENTS.md -a claude-code
 
 # 全局级：下载到 ~/.agents/ 并 symlink 到已检测到的 agent 客户端
-agent-spec add https://github.com/vercel-labs/agent-skills/blob/main/AGENTS.md -g
+agent-specs add https://github.com/vercel-labs/agent-skills/blob/main/AGENTS.md -g
 ```
 
 ## 命令
 
-### `agent-spec add <source>`
+### `agent-specs add <source>`
 
 从远程 URL 或本地文件安装 `AGENTS.md`。
 
 ```bash
 # 项目级安装（默认）
-agent-spec add https://github.com/vercel-labs/agent-skills/blob/main/AGENTS.md
+agent-specs add https://github.com/vercel-labs/agent-skills/blob/main/AGENTS.md
 
 # 项目级定向安装：让 ./AGENTS.md 成为 truth source，并 symlink 到指定 agent 的项目路径
-agent-spec add ./AGENTS.md -a claude-code
+agent-specs add ./AGENTS.md -a claude-code
 
 # 从其他本地文件导入到当前项目，再 symlink 到指定 agent
-agent-spec add ./docs/shared-rules.md -a claude-code
+agent-specs add ./docs/shared-rules.md -a claude-code
 
 # 全局安装：写入 ~/.agents/AGENTS.md，并 symlink 到各 agent
-agent-spec add https://github.com/vercel-labs/agent-skills/blob/main/AGENTS.md -g
+agent-specs add https://github.com/vercel-labs/agent-skills/blob/main/AGENTS.md -g
 
 # 全局安装到指定 agent
-agent-spec add ./AGENTS.md -g -a claude-code
+agent-specs add ./AGENTS.md -g -a claude-code
 
 # 跳过确认提示（已有文件时自动备份并覆盖）
-agent-spec add https://github.com/vercel-labs/agent-skills/blob/main/AGENTS.md -g -y
+agent-specs add https://github.com/vercel-labs/agent-skills/blob/main/AGENTS.md -g -y
 ```
 
 支持的 source 格式：
@@ -92,41 +77,41 @@ agent-spec add https://github.com/vercel-labs/agent-skills/blob/main/AGENTS.md -
 | `-a, --agent <name>` | 定向安装到指定 agent，而不是依赖自动检测 |
 | `-y, --yes` | 跳过确认，自动备份并覆盖已有文件 |
 
-### `agent-spec update`
+### `agent-specs update`
 
 从原始来源重新读取并更新 `AGENTS.md`。
 
 ```bash
-agent-spec update
-agent-spec update -g
+agent-specs update
+agent-specs update -g
 ```
 
-### `agent-spec list`
+### `agent-specs list`
 
 查看当前安装状态和 symlink 情况。
 
 ```bash
-agent-spec list
-agent-spec list -g
+agent-specs list
+agent-specs list -g
 ```
 
-### `agent-spec link`
+### `agent-specs link`
 
 重新检测 agent 客户端并创建 symlink，适用于安装了新 agent 后需要补建链接的场景。通过 `-a` 显式配置过的全局 agent 也会被保留。
 
 ```bash
-agent-spec link
-agent-spec link -y
+agent-specs link
+agent-specs link -y
 ```
 
-### `agent-spec remove`
+### `agent-specs remove`
 
 移除已安装的 `AGENTS.md` 及相关 symlink。
 
 ```bash
-agent-spec remove
-agent-spec remove -g
-agent-spec remove -g -y
+agent-specs remove
+agent-specs remove -g
+agent-specs remove -g -y
 ```
 
 - 如果安装时复用了一个已经存在的 `AGENTS.md` 作为 truth source，`remove` 会保留该文件，只移除 symlink 和 CLI 元数据。
@@ -149,7 +134,7 @@ agent-spec remove -g -y
 ```
 
 - 修改 `~/.agents/AGENTS.md` 后，已链接的 agent 会立即读取到新内容。
-- 执行 `agent-spec update -g` 后，所有 symlink 目标会同步到最新内容，无需重新链接。
+- 执行 `agent-specs update -g` 后，所有 symlink 目标会同步到最新内容，无需重新链接。
 
 ## 项目级定向安装工作原理
 
@@ -192,7 +177,7 @@ CLI 只会为检测到已安装的 agent 创建 symlink。
 ## Directory Structure
 
 ```text
-agent-spec/
+agent-specs/
 |-- .github/
 |   `-- workflows/
 |       |-- ci.yml          # PR 与 main 分支构建检查
