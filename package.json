@@ -1,6 +1,6 @@
 {
   "name": "agent-spec",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "CLI for managing AGENTS.md files",
   "type": "module",
   "bin": {
