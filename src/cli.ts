@@ -18,9 +18,10 @@ program
 
 program
   .command('add')
-  .description('Install AGENTS.md from a remote URL')
-  .argument('<source>', 'Source URL (GitHub URL or direct URL)')
+  .description('Install AGENTS.md from a remote URL or local file')
+  .argument('<source>', 'Source URL or local file path')
   .option('-g, --global', 'Install globally (~/.agents/) and symlink to detected agent clients')
+  .option('-a, --agent <name>', 'Link to a specific agent client')
   .option('-y, --yes', 'Skip confirmation and overwrite existing files')
   .action(addCommand)
 

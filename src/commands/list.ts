@@ -6,7 +6,12 @@ import {
   readGlobalConfig,
   readProjectConfig,
 } from '../config.ts'
-import { SUPPORTED_AGENTS, detectInstalledAgents } from '../agents.ts'
+import {
+  SUPPORTED_AGENTS,
+  detectInstalledAgents,
+  getAgentsByNames,
+  getProjectAgentPath,
+} from '../agents.ts'
 
 interface ListOptions {
   global?: boolean
@@ -26,7 +31,7 @@ async function listGlobal(): Promise<void> {
 
   if (!config) {
     console.log(pc.yellow('Global AGENTS.md is not installed'))
-    console.log(pc.dim(`Install it with ${pc.bold('agent-specs add <url> -g')}`))
+    console.log(pc.dim(`Install it with ${pc.bold('agent-specs add <source> -g')}`))
     return
   }
 
@@ -39,13 +44,19 @@ async function listGlobal(): Promise<void> {
   // Show symlink status.
   console.log(`\n${pc.bold('Symlink status:')}`)
   const installed = await detectInstalledAgents()
+  const configured = getAgentsByNames(config.linkedAgents ?? [])
+  const visibleAgentNames = new Set([
+    ...installed.map((agent) => agent.name),
+    ...configured.map((agent) => agent.name),
+  ])
+  const agents = SUPPORTED_AGENTS.filter((agent) => visibleAgentNames.has(agent.name))
 
-  if (installed.length === 0) {
+  if (agents.length === 0) {
     console.log(pc.dim('  No installed agent clients detected'))
     return
   }
 
-  for (const agent of installed) {
+  for (const agent of agents) {
     const status = await getSymlinkStatus(agent.globalFilePath, agentsPath)
     const name = pc.bold(agent.displayName)
     const path = pc.dim(agent.globalFilePath)
@@ -73,7 +84,7 @@ async function listProject(): Promise<void> {
 
   if (!config) {
     console.log(pc.yellow('Project AGENTS.md is not installed'))
-    console.log(pc.dim(`Install it with ${pc.bold('agent-specs add <url>')}`))
+    console.log(pc.dim(`Install it with ${pc.bold('agent-specs add <source>')}`))
     return
   }
 
@@ -82,6 +93,34 @@ async function listProject(): Promise<void> {
   console.log(`  Path:      ${agentsPath}`)
   console.log(`  Installed: ${formatDate(config.installedAt)}`)
   console.log(`  Updated:   ${formatDate(config.updatedAt)}`)
+
+  const linkedAgents = getAgentsByNames(config.linkedAgents ?? [])
+  if (linkedAgents.length === 0) {
+    return
+  }
+
+  console.log(`\n${pc.bold('Project agent links:')}`)
+  for (const agent of linkedAgents) {
+    const targetPath = getProjectAgentPath(agent)
+    const status = await getSymlinkStatus(targetPath, agentsPath)
+    const name = pc.bold(agent.displayName)
+    const path = pc.dim(targetPath)
+
+    switch (status) {
+      case 'linked':
+        console.log(`  ${pc.green('●')} ${name} ${path}`)
+        break
+      case 'other-link':
+        console.log(`  ${pc.yellow('●')} ${name} ${path} ${pc.dim('(points elsewhere)')}`)
+        break
+      case 'file':
+        console.log(`  ${pc.yellow('●')} ${name} ${path} ${pc.dim('(regular file, not a symlink)')}`)
+        break
+      case 'missing':
+        console.log(`  ${pc.dim('○')} ${name} ${pc.dim('not linked')}`)
+        break
+    }
+  }
 }
 
 async function getSymlinkStatus(

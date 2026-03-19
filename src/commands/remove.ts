@@ -5,9 +5,9 @@ import {
   getProjectAgentsPath,
   getProjectConfigPath,
   readGlobalConfig,
-  writeGlobalConfig,
+  readProjectConfig,
 } from '../config.ts'
-import { SUPPORTED_AGENTS } from '../agents.ts'
+import { SUPPORTED_AGENTS, getProjectAgentPath } from '../agents.ts'
 import { unlinkAgent } from '../linker.ts'
 import { confirm } from '../prompt.ts'
 
@@ -74,8 +74,12 @@ async function removeGlobal(options: RemoveOptions): Promise<void> {
   }
 
   // Remove the canonical source file.
-  if (await safeUnlink(agentsPath)) {
-    console.log(pc.dim(`Deleted ${agentsPath}`))
+  if (config?.managesSourceFile !== false) {
+    if (await safeUnlink(agentsPath)) {
+      console.log(pc.dim(`Deleted ${agentsPath}`))
+    }
+  } else {
+    console.log(pc.dim(`Preserved ${agentsPath}`))
   }
 
   // Remove the config file.
@@ -93,6 +97,7 @@ async function removeGlobal(options: RemoveOptions): Promise<void> {
 async function removeProject(options: RemoveOptions): Promise<void> {
   const agentsPath = getProjectAgentsPath()
   const configPath = getProjectConfigPath()
+  const config = await readProjectConfig()
 
   if (!(await fileExists(agentsPath)) && !(await fileExists(configPath))) {
     console.log(pc.yellow('Project AGENTS.md is not installed'))
@@ -100,15 +105,33 @@ async function removeProject(options: RemoveOptions): Promise<void> {
   }
 
   if (!options.yes) {
-    const ok = await confirm('Remove the project AGENTS.md file?')
+    const ok = await confirm('Remove the project AGENTS.md file and related project agent links?')
     if (!ok) {
       console.log(pc.dim('Cancelled'))
       return
     }
   }
 
-  if (await safeUnlink(agentsPath)) {
-    console.log(pc.dim(`Deleted ${agentsPath}`))
+  let removedCount = 0
+  for (const agent of SUPPORTED_AGENTS) {
+    const targetPath = getProjectAgentPath(agent)
+    const removed = await unlinkAgent(agent, agentsPath, targetPath)
+    if (removed) {
+      console.log(`  ${pc.red('-')} ${pc.bold(agent.displayName)} ${pc.dim(targetPath)}`)
+      removedCount++
+    }
+  }
+
+  if (removedCount > 0) {
+    console.log(pc.dim(`\nRemoved ${removedCount} project link(s)`))
+  }
+
+  if (config?.managesSourceFile !== false) {
+    if (await safeUnlink(agentsPath)) {
+      console.log(pc.dim(`Deleted ${agentsPath}`))
+    }
+  } else {
+    console.log(pc.dim(`Preserved ${agentsPath}`))
   }
   if (await safeUnlink(configPath)) {
     console.log(pc.dim(`Deleted ${configPath}`))

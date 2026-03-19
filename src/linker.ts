@@ -12,6 +12,7 @@ import pc from 'picocolors'
 
 export interface LinkResult {
   agent: AgentConfig
+  targetPath: string
   status: 'created' | 'exists' | 'replaced' | 'backed-up' | 'skipped'
   detail?: string
 }
@@ -58,13 +59,13 @@ async function isSymlink(path: string): Promise<boolean> {
 export async function linkAgent(
   agent: AgentConfig,
   truthSource: string,
-  options: { yes?: boolean } = {},
+  options: { yes?: boolean; targetPath?: string } = {},
 ): Promise<LinkResult> {
-  const target = agent.globalFilePath
+  const target = options.targetPath ?? agent.globalFilePath
 
   // Already linked correctly.
   if (await isSymlinkTo(target, truthSource)) {
-    return { agent, status: 'exists' }
+    return { agent, targetPath: target, status: 'exists' }
   }
 
   // Ensure the parent directory exists.
@@ -76,7 +77,12 @@ export async function linkAgent(
       // Existing symlink points elsewhere: replace it.
       await unlink(target)
       await symlink(truthSource, target)
-      return { agent, status: 'replaced', detail: 'Replaced an existing symlink' }
+      return {
+        agent,
+        targetPath: target,
+        status: 'replaced',
+        detail: 'Replaced an existing symlink',
+      }
     }
 
     // Existing target is a regular file.
@@ -84,6 +90,7 @@ export async function linkAgent(
       // In interactive mode, skip and tell the user what to do.
       return {
         agent,
+        targetPath: target,
         status: 'skipped',
         detail: `${target} already exists and is not a symlink; use -y to overwrite it or back it up manually`,
       }
@@ -95,6 +102,7 @@ export async function linkAgent(
     await symlink(truthSource, target)
     return {
       agent,
+      targetPath: target,
       status: 'backed-up',
       detail: `Backed up the existing file to ${backupPath}`,
     }
@@ -102,7 +110,7 @@ export async function linkAgent(
 
   // The target path does not exist: create it.
   await symlink(truthSource, target)
-  return { agent, status: 'created' }
+  return { agent, targetPath: target, status: 'created' }
 }
 
 /** Create symlinks for multiple agent clients. */
@@ -121,10 +129,10 @@ export async function linkAgents(
 export async function unlinkAgent(
   agent: AgentConfig,
   truthSource: string,
+  targetPath: string = agent.globalFilePath,
 ): Promise<boolean> {
-  const target = agent.globalFilePath
-  if (await isSymlinkTo(target, truthSource)) {
-    await unlink(target)
+  if (await isSymlinkTo(targetPath, truthSource)) {
+    await unlink(targetPath)
     return true
   }
   return false
@@ -134,7 +142,7 @@ export async function unlinkAgent(
 export function printLinkResults(results: LinkResult[]): void {
   for (const r of results) {
     const name = pc.bold(r.agent.displayName)
-    const path = pc.dim(r.agent.globalFilePath)
+    const path = pc.dim(r.targetPath)
     switch (r.status) {
       case 'created':
         console.log(`  ${pc.green('+')} ${name} ${path}`)

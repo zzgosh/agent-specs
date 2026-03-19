@@ -5,7 +5,7 @@ import {
   readGlobalConfig,
   writeGlobalConfig,
 } from '../config.ts'
-import { detectInstalledAgents } from '../agents.ts'
+import { detectInstalledAgents, getAgentsByNames } from '../agents.ts'
 import { linkAgents, printLinkResults } from '../linker.ts'
 
 interface LinkOptions {
@@ -26,7 +26,18 @@ export async function linkCommand(options: LinkOptions): Promise<void> {
   }
 
   console.log(pc.dim('Detecting installed agent clients...'))
-  const agents = await detectInstalledAgents()
+  const detectedAgents = await detectInstalledAgents()
+  const configuredAgents = config?.linkedAgents
+    ? getAgentsByNames(config.linkedAgents)
+    : []
+  const agentNames = new Set([
+    ...detectedAgents.map((agent) => agent.name),
+    ...configuredAgents.map((agent) => agent.name),
+  ])
+  const agents = [...detectedAgents, ...configuredAgents]
+    .filter((agent, index, arr) => (
+      agentNames.has(agent.name) && arr.findIndex((item) => item.name === agent.name) === index
+    ))
 
   if (agents.length === 0) {
     console.log(pc.yellow('No installed agent clients detected'))
@@ -42,11 +53,15 @@ export async function linkCommand(options: LinkOptions): Promise<void> {
 
   // Update linkedAgents in config.
   if (config) {
-    await writeGlobalConfig({
-      ...config,
-      linkedAgents: results
+    const nextLinkedAgents = Array.from(new Set([
+      ...(config.linkedAgents ?? []),
+      ...results
         .filter((r) => r.status !== 'skipped')
         .map((r) => r.agent.name),
+    ]))
+    await writeGlobalConfig({
+      ...config,
+      linkedAgents: nextLinkedAgents,
     })
   }
 

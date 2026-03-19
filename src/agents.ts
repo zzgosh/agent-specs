@@ -1,85 +1,63 @@
 import { homedir } from 'node:os'
-import { join } from 'node:path'
+import { basename, dirname, join } from 'node:path'
 import { access } from 'node:fs/promises'
 import type { AgentConfig } from './types.ts'
 
 const home = homedir()
 
+function createAgent(
+  name: string,
+  displayName: string,
+  relativeFilePath: string,
+): AgentConfig {
+  return {
+    name,
+    displayName,
+    detectDir: join(home, dirname(relativeFilePath)),
+    relativeFilePath,
+    globalFilePath: join(home, relativeFilePath),
+    fileName: basename(relativeFilePath),
+  }
+}
+
 /**
  * Supported agent clients with known global rules file locations.
  */
 export const SUPPORTED_AGENTS: AgentConfig[] = [
-  {
-    name: 'claude-code',
-    displayName: 'Claude Code',
-    detectDir: join(home, '.claude'),
-    globalFilePath: join(home, '.claude', 'CLAUDE.md'),
-    fileName: 'CLAUDE.md',
-  },
-  {
-    name: 'gemini-cli',
-    displayName: 'Gemini CLI',
-    detectDir: join(home, '.gemini'),
-    globalFilePath: join(home, '.gemini', 'GEMINI.md'),
-    fileName: 'GEMINI.md',
-  },
-  {
-    name: 'codex',
-    displayName: 'Codex (OpenAI)',
-    detectDir: join(home, '.codex'),
-    globalFilePath: join(home, '.codex', 'AGENTS.md'),
-    fileName: 'AGENTS.md',
-  },
-  {
-    name: 'amp',
-    displayName: 'Amp',
-    detectDir: join(home, '.config', 'amp'),
-    globalFilePath: join(home, '.config', 'amp', 'AGENTS.md'),
-    fileName: 'AGENTS.md',
-  },
-  {
-    name: 'opencode',
-    displayName: 'OpenCode',
-    detectDir: join(home, '.config', 'opencode'),
-    globalFilePath: join(home, '.config', 'opencode', 'AGENTS.md'),
-    fileName: 'AGENTS.md',
-  },
-  {
-    name: 'qwen-code',
-    displayName: 'Qwen Code',
-    detectDir: join(home, '.qwen'),
-    globalFilePath: join(home, '.qwen', 'QWEN.md'),
-    fileName: 'QWEN.md',
-  },
-  {
-    name: 'roo-code',
-    displayName: 'Roo Code',
-    detectDir: join(home, '.roo'),
-    globalFilePath: join(home, '.roo', 'rules', 'AGENTS.md'),
-    fileName: 'AGENTS.md',
-  },
-  {
-    name: 'continue',
-    displayName: 'Continue',
-    detectDir: join(home, '.continue'),
-    globalFilePath: join(home, '.continue', 'rules', 'AGENTS.md'),
-    fileName: 'AGENTS.md',
-  },
-  {
-    name: 'augment',
-    displayName: 'Augment',
-    detectDir: join(home, '.augment'),
-    globalFilePath: join(home, '.augment', 'rules', 'AGENTS.md'),
-    fileName: 'AGENTS.md',
-  },
-  {
-    name: 'kiro',
-    displayName: 'Kiro',
-    detectDir: join(home, '.kiro'),
-    globalFilePath: join(home, '.kiro', 'steering', 'AGENTS.md'),
-    fileName: 'AGENTS.md',
-  },
+  createAgent('claude-code', 'Claude Code', '.claude/CLAUDE.md'),
+  createAgent('gemini-cli', 'Gemini CLI', '.gemini/GEMINI.md'),
+  createAgent('codex', 'Codex (OpenAI)', '.codex/AGENTS.md'),
+  createAgent('amp', 'Amp', '.config/amp/AGENTS.md'),
+  createAgent('opencode', 'OpenCode', '.config/opencode/AGENTS.md'),
+  createAgent('qwen-code', 'Qwen Code', '.qwen/QWEN.md'),
+  createAgent('roo-code', 'Roo Code', '.roo/rules/AGENTS.md'),
+  createAgent('continue', 'Continue', '.continue/rules/AGENTS.md'),
+  createAgent('augment', 'Augment', '.augment/rules/AGENTS.md'),
+  createAgent('kiro', 'Kiro', '.kiro/steering/AGENTS.md'),
 ]
+
+export function getProjectAgentPath(
+  agent: AgentConfig,
+  cwd: string = process.cwd(),
+): string {
+  return join(cwd, agent.relativeFilePath)
+}
+
+export function getAgentByName(name: string): AgentConfig | undefined {
+  return SUPPORTED_AGENTS.find((agent) => agent.name === name)
+}
+
+export function getAgentsByNames(names: string[]): AgentConfig[] {
+  const seen = new Set<string>()
+  return names.flatMap((name) => {
+    const agent = getAgentByName(name)
+    if (!agent || seen.has(agent.name)) {
+      return []
+    }
+    seen.add(agent.name)
+    return [agent]
+  })
+}
 
 /** Check whether a directory exists. */
 async function dirExists(path: string): Promise<boolean> {

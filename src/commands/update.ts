@@ -25,12 +25,12 @@ export async function updateCommand(options: UpdateOptions): Promise<void> {
 async function updateGlobal(): Promise<void> {
   const config = await readGlobalConfig()
   if (!config) {
-    console.error(pc.red('Global AGENTS.md is not installed. Run agent-specs add <url> -g first.'))
+    console.error(pc.red('Global AGENTS.md is not installed. Run agent-specs add <source> -g first.'))
     process.exit(1)
   }
 
   console.log(pc.dim(`Source: ${config.source}`))
-  console.log(pc.dim('Fetching latest content...'))
+  console.log(pc.dim('Loading latest content...'))
 
   const source = parseSource(config.source)
   let content: string
@@ -57,12 +57,12 @@ async function updateGlobal(): Promise<void> {
 async function updateProject(): Promise<void> {
   const config = await readProjectConfig()
   if (!config) {
-    console.error(pc.red('Project AGENTS.md is not installed. Run agent-specs add <url> first.'))
+    console.error(pc.red('Project AGENTS.md is not installed. Run agent-specs add <source> first.'))
     process.exit(1)
   }
 
   console.log(pc.dim(`Source: ${config.source}`))
-  console.log(pc.dim('Fetching latest content...'))
+  console.log(pc.dim('Loading latest content...'))
 
   const source = parseSource(config.source)
   let content: string
