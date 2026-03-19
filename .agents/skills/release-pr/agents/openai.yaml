@@ -1,0 +1,4 @@
+interface:
+  display_name: "Release PR"
+  short_description: "Create and push a release PR"
+  default_prompt: "Use $release-pr to prepare, validate, and open a release pull request."
