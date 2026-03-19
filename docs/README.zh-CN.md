@@ -74,7 +74,7 @@ agent-specs add https://github.com/vercel-labs/agent-skills/blob/main/AGENTS.md 
 | 选项 | 说明 |
 |------|------|
 | `-g, --global` | 全局安装，并 symlink 到各 agent 客户端 |
-| `-a, --agent <name>` | 定向安装到指定 agent，而不是依赖自动检测 |
+| `-a, --agent <name>` | 定向安装到指定 agent，而不是依赖自动检测。可用值见“支持的 Agent 客户端” |
 | `-y, --yes` | 跳过确认，自动备份并覆盖已有文件 |
 
 ### `agent-specs update`
@@ -150,18 +150,18 @@ agent-specs remove -g -y
 
 ## 支持的 Agent 客户端
 
-| Agent | 检测目录 | Symlink 目标 | 文件名 |
-|-------|---------|-------------|--------|
-| Claude Code | `~/.claude/` | `~/.claude/CLAUDE.md` | `CLAUDE.md` |
-| Gemini CLI | `~/.gemini/` | `~/.gemini/GEMINI.md` | `GEMINI.md` |
-| Codex (OpenAI) | `~/.codex/` | `~/.codex/AGENTS.md` | `AGENTS.md` |
-| Amp | `~/.config/amp/` | `~/.config/amp/AGENTS.md` | `AGENTS.md` |
-| OpenCode | `~/.config/opencode/` | `~/.config/opencode/AGENTS.md` | `AGENTS.md` |
-| Qwen Code | `~/.qwen/` | `~/.qwen/QWEN.md` | `QWEN.md` |
-| Roo Code | `~/.roo/` | `~/.roo/rules/AGENTS.md` | `AGENTS.md` |
-| Continue | `~/.continue/` | `~/.continue/rules/AGENTS.md` | `AGENTS.md` |
-| Augment | `~/.augment/` | `~/.augment/rules/AGENTS.md` | `AGENTS.md` |
-| Kiro | `~/.kiro/` | `~/.kiro/steering/AGENTS.md` | `AGENTS.md` |
+| Agent | `--agent` | 检测目录 | Symlink 目标 | 文件名 |
+|-------|-----------|----------|-------------|--------|
+| Claude Code | `claude-code` | `~/.claude/` | `~/.claude/CLAUDE.md` | `CLAUDE.md` |
+| Gemini CLI | `gemini-cli` | `~/.gemini/` | `~/.gemini/GEMINI.md` | `GEMINI.md` |
+| Codex (OpenAI) | `codex` | `~/.codex/` | `~/.codex/AGENTS.md` | `AGENTS.md` |
+| Amp | `amp` | `~/.config/amp/` | `~/.config/amp/AGENTS.md` | `AGENTS.md` |
+| OpenCode | `opencode` | `~/.config/opencode/` | `~/.config/opencode/AGENTS.md` | `AGENTS.md` |
+| Qwen Code | `qwen-code` | `~/.qwen/` | `~/.qwen/QWEN.md` | `QWEN.md` |
+| Roo Code | `roo-code` | `~/.roo/` | `~/.roo/rules/AGENTS.md` | `AGENTS.md` |
+| Continue | `continue` | `~/.continue/` | `~/.continue/rules/AGENTS.md` | `AGENTS.md` |
+| Augment | `augment` | `~/.augment/` | `~/.augment/rules/AGENTS.md` | `AGENTS.md` |
+| Kiro | `kiro` | `~/.kiro/` | `~/.kiro/steering/AGENTS.md` | `AGENTS.md` |
 
 CLI 只会为检测到已安装的 agent 创建 symlink。
 如果显式传入 `-a, --agent <name>`，CLI 会直接为该 agent 建立链接。

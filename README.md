@@ -74,7 +74,7 @@ Options:
 | Option | Description |
 |------|------|
 | `-g, --global` | Install globally and symlink to detected agent clients |
-| `-a, --agent <name>` | Link to a specific agent client instead of relying on auto-detection |
+| `-a, --agent <name>` | Link to a specific agent client instead of relying on auto-detection. See Supported Agent Clients for valid values. |
 | `-y, --yes` | Skip confirmation and automatically back up then overwrite existing files |
 
 ### `agent-specs update`
@@ -150,18 +150,18 @@ agent-specs remove -g -y
 
 ## Supported Agent Clients
 
-| Agent | Detection Directory | Symlink Target | Filename |
-|-------|---------|-------------|--------|
-| Claude Code | `~/.claude/` | `~/.claude/CLAUDE.md` | `CLAUDE.md` |
-| Gemini CLI | `~/.gemini/` | `~/.gemini/GEMINI.md` | `GEMINI.md` |
-| Codex (OpenAI) | `~/.codex/` | `~/.codex/AGENTS.md` | `AGENTS.md` |
-| Amp | `~/.config/amp/` | `~/.config/amp/AGENTS.md` | `AGENTS.md` |
-| OpenCode | `~/.config/opencode/` | `~/.config/opencode/AGENTS.md` | `AGENTS.md` |
-| Qwen Code | `~/.qwen/` | `~/.qwen/QWEN.md` | `QWEN.md` |
-| Roo Code | `~/.roo/` | `~/.roo/rules/AGENTS.md` | `AGENTS.md` |
-| Continue | `~/.continue/` | `~/.continue/rules/AGENTS.md` | `AGENTS.md` |
-| Augment | `~/.augment/` | `~/.augment/rules/AGENTS.md` | `AGENTS.md` |
-| Kiro | `~/.kiro/` | `~/.kiro/steering/AGENTS.md` | `AGENTS.md` |
+| Agent | `--agent` | Detection Directory | Symlink Target | Filename |
+|-------|-----------|---------------------|----------------|----------|
+| Claude Code | `claude-code` | `~/.claude/` | `~/.claude/CLAUDE.md` | `CLAUDE.md` |
+| Gemini CLI | `gemini-cli` | `~/.gemini/` | `~/.gemini/GEMINI.md` | `GEMINI.md` |
+| Codex (OpenAI) | `codex` | `~/.codex/` | `~/.codex/AGENTS.md` | `AGENTS.md` |
+| Amp | `amp` | `~/.config/amp/` | `~/.config/amp/AGENTS.md` | `AGENTS.md` |
+| OpenCode | `opencode` | `~/.config/opencode/` | `~/.config/opencode/AGENTS.md` | `AGENTS.md` |
+| Qwen Code | `qwen-code` | `~/.qwen/` | `~/.qwen/QWEN.md` | `QWEN.md` |
+| Roo Code | `roo-code` | `~/.roo/` | `~/.roo/rules/AGENTS.md` | `AGENTS.md` |
+| Continue | `continue` | `~/.continue/` | `~/.continue/rules/AGENTS.md` | `AGENTS.md` |
+| Augment | `augment` | `~/.augment/` | `~/.augment/rules/AGENTS.md` | `AGENTS.md` |
+| Kiro | `kiro` | `~/.kiro/` | `~/.kiro/steering/AGENTS.md` | `AGENTS.md` |
 
 The CLI only creates symlinks for agent clients that are actually detected on the machine.
 When `-a, --agent <name>` is provided, the CLI links the selected agent directly.
